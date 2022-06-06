@@ -2,7 +2,7 @@
 //  AfterCombine.swift
 //  SecondProject
 //
-//  Created by Abdullah Kardas on 22.05.2022.
+//  Created by Abdullah Kardas on 22.05.2022.
 //
 
 import SwiftUI
@@ -76,7 +76,7 @@ struct QuadShape:Shape {
         Path{path in
             path.move(to: CGPoint(x: rect.minX , y: rect.minY))
         
-            path.addQuadCurve(to: CGPoint(x: rect.maxX, y: rect.minY), control: CGPoint(x: rect.midX, y: 100))
+            path.addQuadCurve(to: CGPoint(x: rect.maxX, y: rect.minY), control: CGPoint(x: rect.midX, y: rect.height))
           
             path.closeSubpath()
 
@@ -99,21 +99,31 @@ struct WaveArc:Shape {
 }
 
 struct AfterCombine: View {
-  
+    @State var opac:CGFloat = 0.5
     var body: some View {
         NavigationView{
             VStack {
            
+                Spacer(minLength: 24)
                 HStack {
-                    Triangle().stroke(.purple, lineWidth: 8).frame(width: 150, height: 150).glow(glowColor: .purple)
-                    Diamond().fill(.cyan).frame(width: 75, height: 75).glow(glowColor: .cyan)
-                    Pentagon().stroke(.yellow, lineWidth: 8).frame(width: 100, height: 100).glow(glowColor: .yellow)
+                    Triangle().stroke(.purple, lineWidth: 8).frame(width: 150, height: 150)
+                        .glow(glowColor: .purple)
+                    Diamond().fill(.cyan).frame(width: 75, height: 75)
+                        .glow(glowColor: .cyan)
+                    Pentagon().stroke(.yellow, lineWidth: 8).frame(width: 100, height: 100)
+                        .glow(glowColor: .yellow)
                 }
-             Spacer(minLength: 8)
-                ShapeWithArc().stroke(.orange, lineWidth: 8).frame(width: 100, height: 100).glow(glowColor: .orange)
-                QuadShape().stroke(.green, lineWidth: 6).frame(maxWidth:.infinity).frame(height:100).glow(glowColor: .green).padding()
+             Spacer(minLength: 16)
+                ShapeWithArc().stroke(.orange, lineWidth: 8).frame(width: 100, height: 100)
+                    .glow(glowColor: .orange)
+                QuadShape().stroke(.green, lineWidth: 6).frame(maxWidth:.infinity).frame(height:150).padding()
+                    .glow(glowColor: .green, opac: opac)
                 
-                CustomArc().stroke(.red, lineWidth: 6).frame(maxWidth:.infinity).frame(height:90).glow(glowColor: .red).padding()
+                CustomArc().stroke(.red, lineWidth: 6).frame(maxWidth:.infinity).frame(height:90).padding().shadow(color: .red, radius: 8)
+                    .shadow(color: .red.opacity(0.8), radius: 16)
+                    .shadow(color: .red.opacity(opac), radius: 24).animation(.linear(duration: 0.8).repeatForever(), value: opac).onAppear {
+                        opac = 0.8
+                    }
                 Spacer()
                 
                 WaveArc().fill(
@@ -121,6 +131,7 @@ struct AfterCombine: View {
                 )
                     .frame(maxWidth:.infinity)
                     .frame(height:200).glow(glowColor: .blue)
+                    
                     
             }.navigationBarHidden(true).ignoresSafeArea(edges: .bottom)
         }
@@ -134,6 +145,15 @@ struct AfterCombine_Previews: PreviewProvider {
 }
 
 extension View {
+    func glow(glowColor:Color,opac:CGFloat) -> some View{
+        var opac1 = opac
+       return self.shadow(color: glowColor, radius: 8)
+            .shadow(color: glowColor.opacity(0.8), radius: 16)
+            .shadow(color: glowColor.opacity(opac1), radius: 24).animation(.linear(duration: 0.8).repeatForever(), value: opac1).onAppear {
+                opac1 = 0.8
+            }
+    }
+    
     func glow(glowColor:Color) -> some View{
         self.shadow(color: glowColor, radius: 8)
             .shadow(color: glowColor.opacity(0.8), radius: 16)
