@@ -1,2 +1,2 @@
 # SwiftUI-GlowingWithPath
-![Screenshot](gggg.png)
+![Screenshot](glowing.png)
